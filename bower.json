@@ -1,7 +1,7 @@
 {
-  "name": "reach-core-layout",
-  "description": "Layouts header, drawer and main-content",
-  "main": "reach-core-layout.html",
+  "name": "reach-core",
+  "description": "Reach core components",
+  "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.7.0",
     "app-layout": "PolymerElements/app-layout#^0.10.4",
