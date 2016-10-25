@@ -150,21 +150,22 @@
       _pageChanged: function(page) {
         this.$$('#core-content').select(page);
         var el = this.$$('#core-content').selectedItem;
+        if (el && el.constructor === HTMLElement) {
+          this.$$('#core-content').select('spinner');
+        }
         var group = el.getAttribute('lazy-import') ? el.getAttribute('lazy-import') : el.tagName.toLowerCase();
         var auth = el.hasAttribute('auth');
-        if (el && el.tagName) {
-          if (el.constructor === HTMLElement) {
-            this.$$('#core-content').select('spinner');
-            if (auth && !this.user) {
-              return this._waitForLogin(auth, this.user, page);
-            } else if (!this._loadedImports[group]) {
-              return this.importLazyGroup(group, this._fromElement).then(this._pageLoaded.bind(this, group, page));
-            } else {
-              return this.$$('#core-content').select(this._notFound);
-            }
+
+        if (el && el.constructor === HTMLElement) {
+          if (auth && !this.user) {
+            return this._waitForLogin(auth, this.user, page);
+          } else if (!this._loadedImports[group]) {
+            return this.importLazyGroup(group, this._fromElement).then(this._pageLoaded.bind(this, group, page));
+          } else {
+            return this.$$('#core-content').select(this._notFound);
           }
-        } else {
-          console.log(new Error('element doesn\'t exist'));
+        } else if (!el) {
+          console.error(new Error('element doesn\'t exist'));
         }
       },
 
