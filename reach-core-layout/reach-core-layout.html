@@ -1,0 +1,264 @@
+<!-- Polymer Global dependencies -->
+<link rel="import" href="../../polymer/polymer.html">
+
+<!-- Polymer Element dependencies -->
+<link rel="import" href="../../app-layout/app-box/app-box.html">
+<link rel="import" href="../../app-layout/app-scroll-effects/effects/parallax-background.html">
+<link rel="import" href="../../iron-media-query/iron-media-query.html">
+
+<!--
+`<reach-core-layout>` allows the automatic laying out of header, drawers, and content.
+It also notifies other components via double-binded variables if the viewport is
+a phone, tablet, small desktops, or large screen. Lastly, it notifies other components
+of the scroll progress of the viewport (not the scroll position).
+
+It usually used in your entry shell like reach-core-app.
+
+```html
+<reach-core-layout>
+  <custom-header main-header></custom-header>
+  <custom-drawer main-drawer></custom-drawer>
+  <custom-viewer main-content></custom-viewer>
+</reach-core-layout>
+```
+
+HTML DOM lays out elements based on which is called first. That means the first element
+will be put at the back of the view port while the last sibling element is put at the
+front of the viewport without using `z-index`. Using this, we can define which
+child elements is a header, drawer, and main-content and it automatically lays
+them out to put the main-content at the back of the viewport, then the header,
+then the drawers.
+
+### Setting Elements to be Content, Header, or Drawer
+
+To do that, you just have to set attributes `main-content`, `main-header`, and
+`main-drawer` to elements that is the main-content, header, and drawer, respectively
+(See above example).
+
+You can also set the position
+
+###
+
+The element also detects and notifies if the viewport is of at least phone size,
+tablet size, small desktop size, and large screen size. You can also specify
+the minimum or maximum width threshold to detect changes in viewport size depending
+on the set thresholds
+
+
+-->
+
+<dom-module id="reach-core-layout">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <!-- Custom Media Queries -->
+    <iron-media-query
+      query="[[_computeIsBelowWidthQuery(maxWidth)]]"
+      query-matches="{{belowMaxWidth}}"></iron-media-query>
+
+    <iron-media-query
+      query="[[_computeIsAboveWidthQuery(minWidth)]]"
+      query-matches="{{aboveMinWidth}}"></iron-media-query>
+
+    <!-- Mobile First Queries -->
+    <iron-media-query
+      query="(min-width: 320px)"
+      query-matches="{{phones}}"></iron-media-query>
+
+    <iron-media-query
+      query="(min-width: 480px)"
+      query-matches="{{tablets}}"></iron-media-query>
+
+    <iron-media-query
+      query="(min-width: 840px)"
+      query-matches="{{smallDesktops}}"></iron-media-query>
+
+    <iron-media-query
+      query="(min-width: 1200px)"
+      query-matches="{{largeScreens}}"></iron-media-query>
+
+    <!-- Scroll Computation -->
+    <app-box
+      effects="parallax-background"
+      effects-config='{"parallax-background": {"scalar": -0.5}}'></app-box>
+
+    <!-- Content ordering-->
+    <content id="main-content" select="[main-content]"></content>
+    <content id="main-header" select="[main-header]"></content>
+    <content id="main-drawer" select="[main-drawer]"></content>
+
+  </template>
+  <script>
+    /*global Polymer*/
+
+    Polymer({
+      is: 'reach-core-layout',
+
+      listeners: {
+        'toggle-drawer': '_toggleDrawer'
+      },
+
+      properties: {
+        /**
+         * Sets the viewport's minimum width threshold. Default value is 768px.
+         */
+        minWidth: {
+          type: Number,
+          value: 768
+        },
+
+        /**
+         * Sets the viewport's maximum width threshold. Default value is 768px.
+         */
+        maxWidth: {
+          type: Number,
+          value: 768
+        },
+
+        /**
+         * Is true if viewport is above the minimum width threshold.
+         */
+        aboveMinWidth: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * Is true if viewport is below the maximum width threshold.
+         */
+        belowMaxWidth: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * Is true if viewport is at least phone size (from 320px above)
+         */
+        phones: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * Is true if viewport is at least tablet size (from 480px above)
+         */
+        tablets: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * Is true if viewport is at least small desktop size (from 768px above)
+         */
+        smallDesktops: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * Is true if viewport is at least large screen size (from 1200px above)
+         */
+        largeScreens: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * Notifies the scroll progress of the viewport from 0 to 1. Useful for
+         * manipulating header transparencies depending on viewport scroll.
+         */
+        scrollProgress: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+      },
+
+      /**
+       * Lifecycle methods
+       */
+      attached: function() {
+        this.scrollHeaderEffect();
+        window.addEventListener('scroll', this.scrollHeaderEffect.bind(this));
+      },
+
+      detached: function() {
+        window.removeEventListener('scroll', this.scrollHeaderEffect.bind(this));
+      },
+
+      /**
+       * Gets the scroll progress from the `app-box` element and sets the
+       * `scrollProgress` property.
+       *
+       * @return {number} the scroll progress of the viewport
+       */
+      scrollHeaderEffect: function() {
+        this.scrollProgress = this.$$('app-box').getScrollState().progress;
+        return this.scrollProgress;
+      },
+
+      /**
+       * Calls and passes the drawer id (if it exists) to the private method `_toggleDrawer`
+       * to open/close the element with a `main-drawer` attribute that has the id.
+       *
+       * @param {string} id of the drawer (optional)
+       */
+
+      toggleDrawer: function(id) {
+        this._toggleDrawer({detail: id});
+      },
+
+      /**
+       * Toggles the drawer method of the first child element with an attribute of
+       * main-drawer that has a method toggleDrawer and that is not hidden by default.
+       * It is called by listening an event `toggle-drawer` or by calling the
+       * `toggleDrawer` public method.
+       *
+       * It also checks if there is drawer id given by checking the event data payload
+       * for the string drawer id. If there exists a string id, it then checks if
+       * the id exists as an attribute of the element or it is the value of the attribute
+       * `main-drawer` and toggles the drawer method from there.
+       *
+       * @param {{detail: string}}
+       */
+      _toggleDrawer: function(e) {
+        var id = e && e.detail ? e.detail : null;
+        var nodes = this.queryAllEffectiveChildren('[main-drawer]');
+        for (var i in nodes) {
+          var el = nodes[i];
+          if (el && el.toggleDrawer) {
+            if (id && (
+                el.hasAttribute(id) ||
+                el.getAttribute('main-drawer') === id)) {
+              return el.toggleDrawer();
+            } else if (!el.hasAttribute('hidden')) {
+              return el.toggleDrawer();
+            }
+          }
+        }
+      },
+
+      /**
+       * Computes belowMinWidth value
+       *
+       * @param {number} width is the value of the maxWidth property
+       */
+      _computeIsBelowWidthQuery: function(width) {
+        return '(max-width: ' + width + 'px)';
+      },
+
+      /**
+       * Computes aboveMaxWidth value
+       *
+       *@param {number} width is the value of the minWidth property
+       */
+      _computeIsAboveWidthQuery: function(width) {
+        return '(min-width: ' + width + 'px)';
+      },
+    })
+  </script>
+</dom-module>

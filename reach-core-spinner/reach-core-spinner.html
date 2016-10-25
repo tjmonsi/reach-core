@@ -1,0 +1,41 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../polymer/polymer.html">
+
+<!-- Polymer Elements dependencies -->
+<link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="reach-core-spinner">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+      
+      .spinner {
+        margin-top: 200px;
+      }
+      
+      paper-spinner-lite {
+        width: 100px;
+        height: 100px;
+        --paper-spinner-stroke-width: 6px
+      }
+    </style>
+
+    <div class="spinner">
+      <div class="horizontal layout">
+        <div class="flex"></div>
+        <paper-spinner-lite alt="Loading Page" active></paper-spinner-lite>
+        <div class="flex"></div>
+      </div>
+    </div>
+
+  </template>
+  <script>
+    /*global Polymer*/
+    Polymer({
+      is: 'reach-core-spinner'
+    });
+  </script>
+</dom-module>
