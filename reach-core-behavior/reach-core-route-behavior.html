@@ -216,7 +216,7 @@
         this.set('navigationList', navigationList);
 
         Polymer.dom.flush();
-        this.page = this.page || this.defaultPage;
+        this.page = this.page || this.routeData.page || this.defaultPage;
       }
     };
     Polymer.ReachCoreRouteBehavior = [
