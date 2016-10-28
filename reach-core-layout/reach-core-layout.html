@@ -106,6 +106,7 @@ on the set thresholds
        * @return {number} the scroll progress of the viewport
        */
       scrollHeaderEffect: function() {
+        this.$$('app-box').resetLayout();
         this.scrollProgress = this.$$('app-box').getScrollState().progress;
         return this.scrollProgress;
       },
