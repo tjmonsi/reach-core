@@ -4,7 +4,6 @@
 <!-- Polymer Element dependencies -->
 <link rel="import" href="../../app-layout/app-box/app-box.html">
 <link rel="import" href="../../app-layout/app-scroll-effects/effects/parallax-background.html">
-<link rel="import" href="../../iron-media-query/iron-media-query.html">
 
 <!--
 `<reach-core-layout>` allows the automatic laying out of header, drawers, and content.
@@ -55,32 +54,6 @@ on the set thresholds
       }
     </style>
 
-    <!-- Custom Media Queries -->
-    <iron-media-query
-      query="[[_computeIsBelowWidthQuery(maxWidth)]]"
-      query-matches="{{belowMaxWidth}}"></iron-media-query>
-
-    <iron-media-query
-      query="[[_computeIsAboveWidthQuery(minWidth)]]"
-      query-matches="{{aboveMinWidth}}"></iron-media-query>
-
-    <!-- Mobile First Queries -->
-    <iron-media-query
-      query="(min-width: 320px)"
-      query-matches="{{phones}}"></iron-media-query>
-
-    <iron-media-query
-      query="(min-width: 480px)"
-      query-matches="{{tablets}}"></iron-media-query>
-
-    <iron-media-query
-      query="(min-width: 840px)"
-      query-matches="{{smallDesktops}}"></iron-media-query>
-
-    <iron-media-query
-      query="(min-width: 1200px)"
-      query-matches="{{largeScreens}}"></iron-media-query>
-
     <!-- Scroll Computation -->
     <app-box
       effects="parallax-background"
@@ -103,70 +76,6 @@ on the set thresholds
       },
 
       properties: {
-        /**
-         * Sets the viewport's minimum width threshold. Default value is 768px.
-         */
-        minWidth: {
-          type: Number,
-          value: 768
-        },
-
-        /**
-         * Sets the viewport's maximum width threshold. Default value is 768px.
-         */
-        maxWidth: {
-          type: Number,
-          value: 768
-        },
-
-        /**
-         * Is true if viewport is above the minimum width threshold.
-         */
-        aboveMinWidth: {
-          type: Boolean,
-          notify: true
-        },
-
-        /**
-         * Is true if viewport is below the maximum width threshold.
-         */
-        belowMaxWidth: {
-          type: Boolean,
-          notify: true
-        },
-
-        /**
-         * Is true if viewport is at least phone size (from 320px above)
-         */
-        phones: {
-          type: Boolean,
-          notify: true
-        },
-
-        /**
-         * Is true if viewport is at least tablet size (from 480px above)
-         */
-        tablets: {
-          type: Boolean,
-          notify: true
-        },
-
-        /**
-         * Is true if viewport is at least small desktop size (from 768px above)
-         */
-        smallDesktops: {
-          type: Boolean,
-          notify: true
-        },
-
-        /**
-         * Is true if viewport is at least large screen size (from 1200px above)
-         */
-        largeScreens: {
-          type: Boolean,
-          notify: true
-        },
-
         /**
          * Notifies the scroll progress of the viewport from 0 to 1. Useful for
          * manipulating header transparencies depending on viewport scroll.
@@ -240,25 +149,7 @@ on the set thresholds
             }
           }
         }
-      },
-
-      /**
-       * Computes belowMinWidth value
-       *
-       * @param {number} width is the value of the maxWidth property
-       */
-      _computeIsBelowWidthQuery: function(width) {
-        return '(max-width: ' + width + 'px)';
-      },
-
-      /**
-       * Computes aboveMaxWidth value
-       *
-       *@param {number} width is the value of the minWidth property
-       */
-      _computeIsAboveWidthQuery: function(width) {
-        return '(min-width: ' + width + 'px)';
-      },
-    })
+      }
+    });
   </script>
 </dom-module>
