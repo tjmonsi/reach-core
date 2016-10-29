@@ -150,7 +150,7 @@
       _pageChanged: function(page) {
         this.$$('#core-content').select(page);
         var el = this.$$('#core-content').selectedItem;
-        if (el && el.constructor === HTMLElement) {
+        if (el && el.constructor === HTMLElement || el.constructor === HTMLUnknownElement) {
           this.$$('#core-content').select('spinner');
         }
         var group = el.getAttribute('lazy-import') ? el.getAttribute('lazy-import') : el.tagName.toLowerCase();
@@ -159,7 +159,7 @@
         if (el && el.constructor === HTMLElement || el.constructor === HTMLUnknownElement) {
           if (auth && !this.user) {
             return this._waitForLogin(auth, this.user, page);
-          } else if (!this._loadedImports[group]) {
+          } else if (!this._loadedImports[group] && group !== this.notFoundTag && group !== this.notAuthorizedTag) {
             return this.importLazyGroup(group, this._fromElement).then(this._pageLoaded.bind(this, group, page));
           } else {
             return this.$$('#core-content').select(this._notFound);
