@@ -156,7 +156,7 @@
         var group = el.getAttribute('lazy-import') ? el.getAttribute('lazy-import') : el.tagName.toLowerCase();
         var auth = el.hasAttribute('auth');
 
-        if (el && el.constructor === HTMLElement) {
+        if (el && el.constructor === HTMLElement || el.constructor === HTMLUnknownElement) {
           if (auth && !this.user) {
             return this._waitForLogin(auth, this.user, page);
           } else if (!this._loadedImports[group]) {
