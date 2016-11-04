@@ -5,9 +5,6 @@
 <script>
   (function(){
     'use strict';
-    /*global Polymer*/
-    /*global Node*/
-
     /** @polymerBehavior Polymer.ReachCoreRouteBehavior */
     Polymer.ReachCoreRouteBehaviorImpl = {
       observers: [
@@ -155,6 +152,7 @@
         }
         var group = el.getAttribute('lazy-import') ? el.getAttribute('lazy-import') : el.tagName.toLowerCase();
         var auth = el.hasAttribute('auth');
+
 
         if (el && el.constructor === HTMLElement || el.constructor === HTMLUnknownElement) {
           if (auth && !this.user) {
