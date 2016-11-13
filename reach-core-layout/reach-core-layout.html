@@ -140,8 +140,11 @@ The above code will open `<project-drawer-one>`.
         // this is a hack. Don't know yet the impact to performance
         // will turn off for now
         // use case is when layout or parent of this element is hidden
-        // this.$$('app-box').resetLayout();
+        this.$$('app-box').resetLayout();
         this.scrollProgress = this.$$('app-box').getScrollState().progress;
+        if (this.$$('app-box').getBoundingClientRect().bottom <= window.scrollY) {
+          this.scrollProgress = 1;
+        }
         return this.scrollProgress;
       },
 
